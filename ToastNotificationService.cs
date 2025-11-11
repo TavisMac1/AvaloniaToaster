@@ -9,7 +9,14 @@ public class ToastNotificationService
     private Window? _mainWindow;
 
     public void RegisterMainWindow(Window window) => _mainWindow = window;
-    
+
+    /// <summary>
+    /// Displays a toast notification overlay with the specified message on the registered main window.
+    /// The notification will automatically disappear after the specified duration.
+    /// </summary>
+    /// <param name="message">The text to display in the toast notification.</param>
+    /// <param name="durationMs">The duration in milliseconds the toast will be visible (default is 3000ms).</param>
+    /// <exception cref="InvalidOperationException">Thrown if the main window has not been registered.</exception>
     public void Show(string message, int durationMs = 3000)
     {
         if (_mainWindow == null) throw new InvalidOperationException("Main window not registered.");
