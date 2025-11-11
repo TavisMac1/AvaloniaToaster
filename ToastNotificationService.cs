@@ -33,8 +33,8 @@ public class ToastNotificationService
                 Foreground = Avalonia.Media.Brushes.White,
                 FontSize = 16
             },
-            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
-            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Bottom,
             Margin = new Avalonia.Thickness(0, 40, 0, 0),
             ZIndex = 9999
         };
