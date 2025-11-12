@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using AvaloniaToaster.Interfaces;
 using GoodnightComputer.Services;
 using System;
 using System.Threading.Tasks;

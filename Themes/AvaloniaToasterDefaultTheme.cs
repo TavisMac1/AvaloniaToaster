@@ -1,10 +1,11 @@
 ﻿using Avalonia.Media;
+using AvaloniaToaster.Interfaces;
 
-namespace GoodnightComputer.Services;
+namespace AvaloniaToaster.Themes;
 
 internal class AvaloniaToasterDefaultTheme : IAvaloniaToasterThemes
 {
-    public IBrush BackgroundColor => Avalonia.Media.Brushes.Blue;
+    public IBrush BackgroundColor => Brushes.Blue;
 
-    public IBrush ForegroundColor => Avalonia.Media.Brushes.White;
+    public IBrush ForegroundColor => Brushes.White;
 }

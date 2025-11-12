@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media;
 
-namespace GoodnightComputer.Services;
+namespace AvaloniaToaster.Interfaces;
 
 public interface IAvaloniaToasterThemes
 {
