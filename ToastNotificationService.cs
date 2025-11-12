@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 using AvaloniaToaster.Interfaces;
-using GoodnightComputer.Services;
+using AvaloniaToaster.Themes;
 using System;
 using System.Threading.Tasks;
 
@@ -11,7 +11,7 @@ public class ToastNotificationService
     private Window _mainWindow;
 
     private IAvaloniaToasterThemes _defaultTheme = new AvaloniaToasterDefaultTheme();
-
+    
     public void RegisterMainWindow(Window window) => _mainWindow = window;
 
     /// <summary>
