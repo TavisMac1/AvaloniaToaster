@@ -2,13 +2,13 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <PackageId>AvaloniaToaster</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>TavisMac1</Authors>
     <Description>A toast notification service for Avalonia UI.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>avalonia;toast;notification</PackageTags>
-    <RepositoryUrl>https://github.com/TavisMac1/AvaolinaToaster</RepositoryUrl>
+    <RepositoryUrl>https://github.com/TavisMac1/AvaloniaToaster</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

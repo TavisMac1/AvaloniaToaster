@@ -1,3 +1,6 @@
+# AvaloniaToaster
+
+Create toast notifications in your Avalonia C# project without the hassle.
 
 ## Usage/Examples
 
@@ -35,3 +38,11 @@ View model controller example
         public void ShowToastBtn_Click(object? sender, RoutedEventArgs e) => _toastService.Show("Toast Dispatched!");
     }
 ```
+
+## Authors
+
+- [@TavisMac1](https://github.com/TavisMac1)
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
