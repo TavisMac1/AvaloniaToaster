@@ -1,4 +1,6 @@
 ﻿using Avalonia.Controls;
+using AvaloniaToaster.Interfaces;
+using AvaloniaToaster.Themes;
 using System;
 using System.Threading.Tasks;
 
@@ -10,8 +12,10 @@ namespace AvaloniaToaster;
 
 public class ToastNotificationService
 {
-    private Window? _mainWindow;
+    private Window _mainWindow;
 
+    private IAvaloniaToasterThemes _defaultTheme = new AvaloniaToasterDefaultTheme();
+    
     public void RegisterMainWindow(Window window) => _mainWindow = window;
 
     /// <summary>
@@ -20,21 +24,32 @@ public class ToastNotificationService
     /// </summary>
     /// <param name="message">The text to display in the toast notification.</param>
     /// <param name="durationMs">The duration in milliseconds the toast will be visible (default is 3000ms).</param>
+    /// <param name="theme">The theme for the toast to implement. Must implement IAvaloniaToasterThemes</param>
     /// <exception cref="InvalidOperationException">Thrown if the main window has not been registered.</exception>
-    public void Show(string message, int durationMs = 3000)
+    public void Show
+    (
+        string message,
+        int durationMs = 3000,
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        IAvaloniaToasterThemes theme = null
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+    )
     {
-        if (_mainWindow == null) throw new InvalidOperationException("Main window not registered.");
+        if (_mainWindow == null)
+            throw new InvalidOperationException("Main window not registered.");
+
+        if (theme is null) theme = _defaultTheme;
 
         // Create a simple overlay (could be a UserControl, Border, etc.)
         var toast = new Border
         {
-            Background = Avalonia.Media.Brushes.Black,
-            CornerRadius = new Avalonia.CornerRadius(8),
-            Padding = new Avalonia.Thickness(16),
+            Background = theme.BackgroundColor,
+            CornerRadius = new Avalonia.CornerRadius(5),
+            Padding = new Avalonia.Thickness(20),
             Child = new TextBlock
             {
                 Text = message,
-                Foreground = Avalonia.Media.Brushes.White,
+                Foreground = theme.ForegroundColor,
                 FontSize = 16
             },
             HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Right,
