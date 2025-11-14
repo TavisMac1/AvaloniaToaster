@@ -25,7 +25,7 @@ In ``MainWindow.axaml.cs`` obtain a reference to the ``ToastNotificationService`
  }
 ```
 
-View model controller example
+### View model controller example
 ``` csharp
     public partial class ExampleClass : UserControl
     {
@@ -39,9 +39,48 @@ View model controller example
     }
 ```
 
+### Using Themes
+
+Themes allow you to style the toast notification. You can create as many theme objects as you like.
+
+Create a new class which implements the interface `IAvaloniaToasterThemes`. 
+``` csharp
+internal class ExampleTheme : IAvaloniaToasterThemes
+{
+    public IBrush BackgroundColor => Avalonia.Media.Brushes.Black;
+
+    public IBrush ForegroundColor => Avalonia.Media.Brushes.White;
+
+    HorizontalAlignment? IAvaloniaToasterThemes.HorizontalAlignment => null;
+
+    VerticalAlignment? IAvaloniaToasterThemes.VerticalAlignment => null;
+
+    double? IAvaloniaToasterThemes.BorderRadius => null;
+} 
+```
+
+The method `Show` from `ToastNotificationService` accepts a theme as an optional argument. If you do not pass one in, it will use the default theme.
+``` csharp
+    public partial class ExampleClass : UserControl
+    {
+        private readonly ToastNotificationService _toastService;
+        private ExampleTheme _exampleTheme; 
+ 
+        public ExampleClass(ToastNotificationService toastService)
+        {
+            _toastService = toastService; // The ToastNotificationService instance from the DI container
+            _exampleTheme = new(); // Your custom theme
+        } 
+        
+        // The corresponding Avalonia xaml (axaml) file would have a button which triggers the following method to fire
+        // The ToastNotificationService dispatches a toast with the specified text when this method is invoked
+        public void ShowToastBtn_Click(object? sender, RoutedEventArgs e) => _toastService.Show("Toast Dispatched!", 3000, _exampleTheme);
+    }
+```
+
 ## Authors
 
-- [@TavisMac1](https://github.com/TavisMac1)
+[@TavisMac1](https://github.com/TavisMac1)
 
 ## License
 
