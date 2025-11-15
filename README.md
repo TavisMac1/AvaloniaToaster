@@ -85,3 +85,6 @@ The method `Show` from `ToastNotificationService` accepts a theme as an optional
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
+### OpenSSF
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11466/badge)](https://www.bestpractices.dev/projects/11466)
