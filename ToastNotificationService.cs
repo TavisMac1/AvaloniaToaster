@@ -1,10 +1,13 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Threading;
 using AvaloniaToaster.Interfaces;
 using AvaloniaToaster.Services.Extensions;
 using AvaloniaToaster.Themes;
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using AvaloniaToaster.Models;
+using System.Linq;
 
 // Author: Tavis MacFarlane
 // Copyright (c) 2025 Tavis MacFarlane
@@ -22,6 +25,16 @@ public class ToastNotificationService
 
     public void RegisterMainWindow(Window window) => _mainWindow = window;
 
+    private Queue<AvaloniaToast> _toasts = new();
+
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+    private Grid? _rootGrid { get; set; }
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+    private StackPanel? _toastPanel;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+
     /// <summary>
     /// Displays a toast notification overlay with the specified message on the registered main window.
     /// The notification will automatically disappear after the specified duration.
@@ -34,72 +47,95 @@ public class ToastNotificationService
     (
         string message,
         int durationMs = 3000,
-        IAvaloniaToasterThemes theme = null
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+        IAvaloniaToasterThemes? theme = null
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     )
     {
         if (_mainWindow == null)
             throw new InvalidOperationException("Main window not registered.");
 
+        if (_toasts.Count >= 5)
+        {
+            var first = _toasts.Dequeue();
+            RemoveAt(first);
+        }
+
         if (theme is null) theme = _defaultTheme;
 
-        var toast = new Border
+        var border = new Border
         {
             Background = theme.BackgroundColor,
-            CornerRadius = theme.BorderRadius is not null ? new Avalonia.CornerRadius((double)theme.BorderRadius!) : new Avalonia.CornerRadius(5),
-            Padding = new Avalonia.Thickness(20),
-            Width = 150,
+            CornerRadius = theme.BorderRadius is not null ? new Avalonia.CornerRadius((double)theme.BorderRadius!) : new Avalonia.CornerRadius(2),
+            Padding = new Avalonia.Thickness(16),
+            Width = 320,
             Opacity = 0,
+            BoxShadow = new Avalonia.Media.BoxShadows(new Avalonia.Media.BoxShadow
+            {
+                Blur = 8,
+                Color = Avalonia.Media.Color.FromArgb((byte)(0.15 * 255), 0, 0, 0),
+                OffsetX = 0,
+                OffsetY = 2
+            }),
             Child = new TextBlock
             {
                 Text = message,
                 Foreground = theme.ForegroundColor,
-                FontSize = 14,
-                TextAlignment = Avalonia.Media.TextAlignment.Center,
-                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center
+                FontSize = 15,
+                TextAlignment = Avalonia.Media.TextAlignment.Left,
+                VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                MaxWidth = 288
             },
             HorizontalAlignment = theme.HorizontalAlignment ?? Avalonia.Layout.HorizontalAlignment.Right,
-            VerticalAlignment = theme.VerticalAlignment ?? Avalonia.Layout.VerticalAlignment.Bottom,
-            Margin = new Avalonia.Thickness(0, 0, 40, 40), // 40px from right and bottom
+            Margin = new Avalonia.Thickness(0, 0, 0, 10),
             ZIndex = 9999
         };
 
-        var rootGrid = _mainWindow.FindRootGrid();
-        if (rootGrid != null)
+        var toast = new AvaloniaToast
+        (
+            t: border,
+            d: durationMs,
+            removeAt: RemoveAt,
+            removeNatural: RemoveAt
+        );
+
+        _toasts.Enqueue(toast);
+
+        _rootGrid = _mainWindow.FindRootGrid();
+        if (_rootGrid != null)
         {
-            if (rootGrid.RowDefinitions.Count == 0)
-                rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-
-            if (rootGrid.ColumnDefinitions.Count == 0)
-                rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-
-            Grid.SetColumn(toast, 0);
-            Grid.SetRow(toast, 0);
-            Grid.SetColumnSpan(toast, rootGrid.ColumnDefinitions.Count);
-            Grid.SetRowSpan(toast, rootGrid.RowDefinitions.Count);
-
-            rootGrid.Children.Add(toast);
-
-            Dispatcher.UIThread.Post(async () =>
+            if (_toastPanel == null)
             {
-                for (double i = 0; i <= 1; i += 0.1)
+                _toastPanel = new StackPanel
                 {
-                    toast.Opacity = i;
-                    await Task.Delay(20);
-                }
-            });
+                    Orientation = Orientation.Vertical,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Margin = new Avalonia.Thickness(0, 0, 40, 40),
+                    ZIndex = 9999
+                };
+                _rootGrid.Children.Add(_toastPanel);
+            }
 
-            Task.Run(async () =>
-            {
-                await Task.Delay(durationMs);
-
-                for (double i = 1; i >= 0; i -= 0.1)
-                {
-                    Dispatcher.UIThread.Post(() => toast.Opacity = i);
-                    await Task.Delay(20);
-                }
-
-                Dispatcher.UIThread.Post(() => rootGrid.Children.Remove(toast));
-            });
+            _toastPanel.Children.Add(border);
         }
+    }
+
+    private void RemoveAt(Guid id)
+    {
+        var toastToRemove = _toasts.Where((e) => e.Id.Equals(id)).FirstOrDefault();
+        if (toastToRemove is null) return;
+        var toast = toastToRemove.Toast;
+        toastToRemove.IsRemoved = true;
+        _toasts = new Queue<AvaloniaToast>(_toasts.Where(e => e.Id != id));
+        Dispatcher.UIThread.Post(() => _toastPanel?.Children.Remove(toast));
+        toastToRemove = null;
+    }
+
+    private void RemoveAt(AvaloniaToast toast)
+    {
+        Dispatcher.UIThread.Post(() => _toastPanel!.Children.Remove(toast.Toast));
+        if (!toast.IsRemoved) _toasts.Dequeue();
     }
 }
