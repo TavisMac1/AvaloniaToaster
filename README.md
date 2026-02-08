@@ -7,7 +7,7 @@ Create toast notifications in your Avalonia C# project without the hassle.
 
 ## Usage/Examples
 
-Example project: https://github.com/TavisMac1/AvaloniaToasterExample
+**Full example project**: https://github.com/TavisMac1/AvaloniaToasterExample
 
 In ``Program.cs`` add ``ToastNotificationService`` as a singleton.
 ```csharp
