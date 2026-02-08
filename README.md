@@ -2,11 +2,14 @@
 
 Create toast notifications in your Avalonia C# project without the hassle.
 
+### OpenSSF
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11466/badge)](https://www.bestpractices.dev/projects/11466)
+
 ## Usage/Examples
 
 Example project: https://github.com/TavisMac1/AvaloniaToasterExample
 
-In ``Project.cs`` add ``ToastNotificationService`` as a singleton.
+In ``Program.cs`` add ``ToastNotificationService`` as a singleton.
 ```csharp
  services.AddSingleton<ToastNotificationService>();
 ```
@@ -87,6 +90,3 @@ The method `Show` from `ToastNotificationService` accepts a theme as an optional
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
-### OpenSSF
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/11466/badge)](https://www.bestpractices.dev/projects/11466)
