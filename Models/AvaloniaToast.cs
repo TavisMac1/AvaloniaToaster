@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace AvaloniaToaster.Models;
 
+// Author: Tavis MacFarlane
+// Copyright (c) 2025 Tavis MacFarlane
+// License: MIT
+
 internal class AvaloniaToast
 {
     public Border Toast { get; init; }

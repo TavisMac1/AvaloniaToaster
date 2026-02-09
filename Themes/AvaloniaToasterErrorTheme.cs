@@ -4,9 +4,9 @@ using AvaloniaToaster.Interfaces;
 
 namespace AvaloniaToaster.Themes;
 
-internal class SuccessTheme : IAvaloniaToasterThemes
+public class AvaloniaToasterErrorTheme : IAvaloniaToasterThemes
 {
-    public IBrush BackgroundColor => Avalonia.Media.Brushes.Green;
+    public IBrush BackgroundColor => Avalonia.Media.Brushes.Red;
 
     public IBrush ForegroundColor => Avalonia.Media.Brushes.White;
 
@@ -14,5 +14,5 @@ internal class SuccessTheme : IAvaloniaToasterThemes
 
     public VerticalAlignment? VerticalAlignment => null;
 
-    public double? BorderRadius => null;
+    public double? BorderRadius => 3;
 }
