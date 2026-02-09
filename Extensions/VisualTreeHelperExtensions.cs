@@ -4,6 +4,10 @@ using Avalonia.VisualTree;
 
 namespace AvaloniaToaster.Services.Extensions;
 
+// Author: Tavis MacFarlane
+// Copyright (c) 2025 Tavis MacFarlane
+// License: MIT
+
 public static class VisualTreeHelperExtensions
 {
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
