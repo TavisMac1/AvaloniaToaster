@@ -18,22 +18,26 @@ namespace AvaloniaToaster;
 public class ToastNotificationService
 {
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-    private Window? _mainWindow;
+    private Window? _mainWindow = null!;
+    private Panel? _toastContainer = null!;
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
     private IAvaloniaToasterThemes _defaultTheme = new AvaloniaToasterDefaultTheme();
 
+    /// <summary>
+    /// Use this if you have a simplistic layout (don't have multiple grids).
+    /// </summary>
+    /// <param name="window"></param>
+    [Obsolete("This method is deprecated. Use RegisterMainWindow() for Panels instead.")]
     public void RegisterMainWindow(Window window) => _mainWindow = window;
+
+    public void RegisterMainWindow(Panel toastContainerPanel) => _toastContainer = toastContainerPanel;
 
     private Queue<AvaloniaToast> _toasts = new();
 
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-    private Grid? _rootGrid { get; set; }
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+    private Grid? _rootGrid { get; set; } = null!;
 
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     private StackPanel? _toastPanel;
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
     /// <summary>
     /// Displays a toast notification overlay with the specified message on the registered main window.
@@ -47,12 +51,10 @@ public class ToastNotificationService
     (
         string message,
         int durationMs = 3000,
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
         IAvaloniaToasterThemes? theme = null
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     )
     {
-        if (_mainWindow == null)
+        if (_toastContainer == null)
             throw new InvalidOperationException("Main window not registered.");
 
         if (_toasts.Count >= 5)
@@ -102,24 +104,30 @@ public class ToastNotificationService
 
         _toasts.Enqueue(toast);
 
-        _rootGrid = _mainWindow.FindRootGrid();
-        if (_rootGrid != null)
+        if (_toastPanel == null)
         {
-            if (_toastPanel == null)
+            _toastPanel = new StackPanel
             {
-                _toastPanel = new StackPanel
-                {
-                    Orientation = Orientation.Vertical,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    VerticalAlignment = VerticalAlignment.Bottom,
-                    Margin = new Avalonia.Thickness(0, 0, 40, 40),
-                    ZIndex = 9999
-                };
-                _rootGrid.Children.Add(_toastPanel);
-            }
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Margin = new Avalonia.Thickness(0, 0, 40, 40),
+                ZIndex = 9999
+            };
 
-            _toastPanel.Children.Add(border);
+            if (_toastContainer != null)
+            {
+                _toastContainer.Children.Add(_toastPanel);
+            }
+            else
+            {
+                _rootGrid = _mainWindow.FindRootGrid();
+                if (_rootGrid != null)
+                    _rootGrid.Children.Add(_toastPanel);
+            }
         }
+
+        _toastPanel.Children.Add(border);
     }
 
     private void RemoveAt(Guid id)
