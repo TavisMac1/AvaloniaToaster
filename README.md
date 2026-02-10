@@ -14,7 +14,17 @@ In ``Program.cs`` add ``ToastNotificationService`` as a singleton.
  services.AddSingleton<ToastNotificationService>();
 ```
 
-In ``MainWindow.axaml.cs`` obtain a reference to the ``ToastNotificationService`` to register the main window.
+In ``MainWindow.axaml`` add a ``Panel`` into your main grid as follows:
+```csharp
+    <Panel x:Name="ToastContainer"
+        Grid.ColumnSpan="3"
+        ZIndex="1000"
+        IsHitTestVisible="False"
+    />
+```
+
+In ``MainWindow.axaml.cs`` obtain a reference to the ``ToastNotificationService`` to register the main window, and find the
+``Panel`` you added in the previous.
 ```csharp
 // MainWindow.axaml.cs constructor
  public MainWindow()
@@ -24,9 +34,10 @@ In ``MainWindow.axaml.cs`` obtain a reference to the ``ToastNotificationService`
 
      // Obtain a reference to the ToastNotificationService singleton
      var toastService = Program.Services.GetRequiredService<ToastNotificationService>();
-
+     // Find the Panel you created in the previous step
+     var toastContainer = this.FindControl<Panel>("ToastContainer");
      // Dispatch this main window to the ToastNotificationService instance
-     toastService.RegisterMainWindow(this);
+     toastService.RegisterMainWindow(toastContainer);
  }
 ```
 
